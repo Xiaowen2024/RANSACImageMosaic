@@ -1,0 +1,477 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+</style>
+<title>CS 180 Project 1</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+<h1 align="middle"> CS180 Fall 2023 </h1>
+<h1 align="middle">Project 4: IMAGE WARPING and MOSAICING</h1>
+<h2 align="middle">Xiaowen Yuan</h2>
+
+<br><br>
+
+<div>
+
+<h2 align="middle">Overview</h2>
+<p>
+In this project, I calculated homography matrix, created a image warping function, and used masks to create a mosaic image. 
+</p>
+
+<h2 align="middle"> Shoot and digitize pictures</h2>
+
+<p> First i went out and shot some pictures with similar exposure and focus length. I tried to use wide angle at a fixed position. 
+    I made sure for image mosaics, the images have at least 40% overlap. Below are the images I took.
+
+
+</p>
+
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src="images/stadium1.JPG"  width="200" height="200" />
+    </td>
+    <td>
+    <img src = "images/stadium2.JPG" width="200" height="200" />
+    </td>
+    <td>
+    </tr>
+    </tbody>
+</table>
+
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src="images/ihouse1.png"  width="200" height="200" />
+    </td>
+    <td>
+    <img src = "images/ihouse2.png" width="200" height="200" />
+    </td>
+    <td>
+    </tr>
+    </tbody>
+</table>
+
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src="images/room1.png"  width="200" height="200" />
+    </td>
+    <td>
+    <img src = "images/room2.png" width="200" height="200" />
+    </td>
+    <td>
+    </tr>
+    </tbody>
+</table>
+
+
+<h2 align="middle"> Recover Homographies </h2>
+
+<p>
+   In this part, I defined correspondences for the images and used the correspondences to calculate the homography matrix. The corresponding points formed systems of linear equations, which can be solved using the least squares methods. 
+    We need at least 4 points to calculate the homography matrix since the homography has 8 degrees of freedom. Below is how the homography matrix is calculated.
+</p>
+
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src="images/homographyMatrix.png"  width="200" height="200" />
+    </td>
+    <td>
+    <img src = "images/homographyMatrix2.png" width="200" height="200" />
+    </td>
+    <td>
+    </tr>
+    </tbody>
+</table>
+
+
+<h2 align="middle"> Warp the Images </h2>
+<p> 
+With the homography matrix, I implemented a warp image function that forwatd warp one image and map the corresponding pixels from the original image to the warped one. 
+More corresponding points and pixel reseampling will help to get a better result. Below are the results.
+</p>
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src="images/stadium_resized_1.png"  width="200"  />
+    </td>
+    <td>
+    <img src = "images/stadium_resized_2.png" width="200" />
+    </td>
+    <td>
+    <img src = "images/warpedStadium1.png" width="200" />
+    </td>
+    <td>
+    </tr>
+    </tbody>
+</table>
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src="images/ihouse1.png"  width="200"  />
+    </td>
+    <td>
+    <img src = "images/ihouse2.png" width="200" />
+    </td>
+    <td>
+    <img src = "images/warpedihouse1.png" width="200" />
+    </td>
+    <td>
+    <img src = "images/warpedihouse2.png" width="200" />
+    </td>
+    <td>
+    </tr>
+    </tbody>
+</table>
+
+<h2 align="middle"> Image Rectification</h2>
+
+<p> In this part, I rectified the image by first specifying four corner points in the original image and then manually defined rectified points that are horizontal and 
+    vertical to each other. Then I used the rectified points to calculate the homography matrix and warp the image. Below are the results.
+</p>
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src="images/rectify_im1.png"  width="200"  />
+    </td>
+    <td>
+    <img src = "images/rectified1.png" width="200" />
+    </td>
+    <td>
+    </tr>
+    </tbody>
+</table>
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src="images/rectify_im3.png"  width="200"  />
+    </td>
+    <td>
+    <img src = "images/rectified2.png" width="200" />
+    </td>
+    <td>
+    </tr>
+    </tbody>
+</table>
+
+
+<h2 align="middle"> Blendng </h2>
+
+<p> 
+    
+    In this part, first I warped the images in the mosaic set using the calculated homography matrix. To be more specific, I used one image as the target and rectified the other image. Then I aligned the images and created a mask for each image. 
+    To make the blending result better, I added a gray region in the binary mask and blurred the mask. Lastly, I used laplacian stacks to blend the images. Below are the results. 
+</p>
+
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/ihouse1_aligned.png" width="400" />
+    </td>
+    <td>
+        <img src = "images/ihouse2_aligned.png" width="400" />
+        </td>
+        <td>
+            <img src = "images/ihouse_mosaic.png" width="400" />
+            </td>
+    </tr>
+</table>
+
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/room1_aligned.png" width="400" />
+    </td>
+    <td>
+        <img src = "images/room2_aligned.png" width="400" />
+        </td>
+        <td>
+            <img src = "images/room_combined.png" width="400" />
+            </td>
+    </tr>
+
+
+</table>
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/stadium1.JPG" width="400" />
+    </td>
+    <td>
+        <img src = "images/stadium2.JPG" width="400" />
+        </td>
+        <td>
+            <img src = "images/stadium_combined.png" width="400" />
+            </td>
+    </tr>
+
+
+</table>
+
+<h2 align="middle"> Learning </h2>
+
+<p> In this part, I learned the calculation of homography matrix and how to utilize them for image rectification. I realized how important it is to define good correspondences
+    and masks. I also realized that blurring and averaging the mask will help a lot in terms of the quality of image mosaics. </p>
+</body>
+</html>
+
+<h1> Part B</h1>
+<p> In this part, we implemented automatic feature detection and homography matrix computation. First we used harris corner detector to detect corner features, and then used use Adaptive Non-Maximal Suppression to decrease the number of corners/features. 
+    Then we created descriptors for the features and implemented feature matching. The last step is implementing the RANSAC algorithm to compute the homography matrix. Below are the results. </p>
+</p>
+
+
+
+<h2 align="middle">  Corner Features  </h2>
+
+<p> 
+    
+    In this part, I used harris corner detector to detect corner features. The harris corner detector code is provided to me. Below are the results. 
+</p>
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/ihouse_corner_features.png" width="400" />
+    </td>
+    <td>
+        <img src = "images/room_corner_features.png" width="400" />
+    </td>
+    </tr>
+
+
+</table>
+
+
+
+<h2 align="middle">  Adaptive Non-Maximal Suppression  </h2>
+
+<p> 
+    
+   In this step, I used Adaptive Non-Maximal Suppression to decrease the number of corners/features. I ranked the features based on the distance between feature and its nearest corner feature. I chose a certain amount of points with the biggest distances. 
+   This filtered out features that are not very important. Below are the results.
+</p>
+
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/ihouse_corner_filtered.png" width="400" />
+    </td>
+    <td>
+        <img src = "images/room_corner_filtered.png" width="400" />
+    </td>
+    </tr>
+</table>
+
+
+
+<h2 align="middle">  Creating feature descriptors  </h2>
+
+<p> 
+    
+   In this step, I sampled 40 x 40 patches around each feature and created feature descriptors. Then I bias/gain-normalized it by finding the average value and standard deviation of pixel values downsampled the features to get an 8x8 matrix. Below are the results.
+</p>
+
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/feature_descriptor_1.png" width="400" />
+    </td>
+    </tr>
+</table>
+
+<h2 align="middle">  Feature Matching  </h2>
+
+<p> 
+    
+   In this step, I found matching features by taking one feature from one image and calculated the ratio between its closest and second closest fearure in the second images. If the threshold is small, we will include the feature in our feature matching. 
+
+</p>
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/feature_match_ihouse_1.png" width="400" />
+    </td>
+    <td>
+        <img src = "images/feature_match_ihouse_2.png" width="400" />
+        </td>
+    </tr>
+</table>
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/feature_match_room_1.png" width="400" />
+    </td>
+    <td>
+        <img src = "images/feature_match_room2.png" width="400" />
+        </td>
+    </tr>
+</table>
+
+
+<h2 align="middle">  RANSAC </h2>
+
+<p> 
+
+    In RANSAC algorithm, I computed the largest set of inliers for two images. For I chose 4 random pairs of points, then I computed homography matrix based on the 4 points. Then I used the homography matrix 
+    to warp the points and calculated their corresponding points in the other image and the warped points. If the distance between the warped points and the corresponding points are smaller than a threshold,
+    then I added the points in the inlier sets. I repeated this process for 1000 times and chose the largest inlier set. Below are the results.
+
+</p>
+
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/light1_point.png" width="400" />
+    </td>
+    <td>
+        <img src = "images/light2_point.png" width="400" />
+        </td>
+    </tr>
+</table>
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/painting1_point.png" width="400" />
+    </td>
+    <td>
+        <img src = "images/painting2_point.png" width="400" />
+        </td>
+    </tr>
+</table>
+
+
+<h2 align="middle">  Mosaics </h2>
+
+<p> 
+
+   Below are some mosaics. 
+</p>
+
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/lamp1.png" width="400" />
+    </td>
+    <td>
+        <img src = "images/lamp2.png" width="400" />
+        </td>
+    </tr>
+</table>
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/light_mosaic.png" width="400" />
+    </td>
+    </tr>
+</table>
+
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/painting.png" width="400" />
+    </td>
+    <td>
+        <img src = "images/painting2.png" width="400" />
+        </td>
+    </tr>
+</table>
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    
+    <td>
+        <img src = "images/painting_mosaic.png" width="400" />
+        </td>
+    </tr>
+</table>
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/kitchen1.png" width="400" />
+    </td>
+    <td>
+        <img src = "images/kitchen2.png" width="400" />
+        </td>
+    </tr>
+</table>
+
+
+
+<table style="width: 100%;">
+    <tbody>
+    <tr>
+    <td>
+    <img src = "images/kitchen_mosaic.png" width="400" />
+    </td>
+   
+</table>
+
+
+<h2> Learning </h2>
+
+<p> The most important thing I learned here is how to iteratively find the best matching comparing distances and calculating thresholds. A good metric helps us converge into a good set of matches or inliers much more efficiently. </p>
